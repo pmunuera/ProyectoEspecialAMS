@@ -1,5 +1,5 @@
-use PROYECTO;
-ALTER DATABASE PROYECTO CHARACTER SET utf8 COLLATE utf8_general_ci;
+use RPM;
+ALTER DATABASE RPM CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 alter table USER 
 	modify id_user int unsigned auto_increment primary key,
@@ -8,7 +8,7 @@ alter table USER
 	add constraint unique_user unique (username),
 	modify date_creation timestamp default localtimestamp();
 
-alter table PROYECTO_CHARACTER 
+alter table RPM.CHARACTER 
 	modify id_character int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	modify name varchar(40) not null,
 	add constraint unique_name unique (name),
@@ -42,7 +42,7 @@ alter table GAME
 	modify id_step int unsigned not null,
 	add constraint FK_GAME_ADVENTURE foreign key (id_adventure) references ADVENTURE(id_adventure),
 	add constraint FK_GAME_USER foreign key (username) references USER(id_user),
-	add constraint FK_GAME_CHARACTER foreign key (id_character) references PROYECTO_CHARACTER(id_character),
+	add constraint FK_GAME_CHARACTER foreign key (id_character) references RPM.CHARACTER(id_character),
 	add constraint FK_GAME_STEP foreign key (id_step) references STEP(id_step),
 	modify date_creation timestamp default localtimestamp();
 
@@ -50,5 +50,5 @@ alter table HAS
 	modify id_adventure int unsigned not null,
 	modify id_character int unsigned not null,
 	add constraint FK_HAS_ADVENTURE foreign key (id_adventure) references ADVENTURE(id_adventure),
-	add constraint FK_HAS_CHARACTER foreign key (id_character) references PROYECTO_CHARACTER(id_character),
+	add constraint FK_HAS_CHARACTER foreign key (id_character) references RPM.CHARACTER(id_character),
 	modify date_creation timestamp default localtimestamp();
