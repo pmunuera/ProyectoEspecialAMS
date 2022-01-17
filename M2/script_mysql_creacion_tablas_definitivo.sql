@@ -1,5 +1,5 @@
-create database if not exists PROYECTO;
-use PROYECTO;
+create database if not exists RPM;
+use RPM;
 create table if not exists USER (
 	id_user int ,
 	username varchar(15) ,
@@ -8,7 +8,7 @@ create table if not exists USER (
     user_modified varchar(15),
     date_modified date
 );
-create table if not exists PROYECTO_CHARACTER (
+create table if not exists RPM.CHARACTER (
 	id_character int ,
     name varchar(40) ,
     description varchar(100),
