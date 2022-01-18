@@ -1,3 +1,7 @@
+import pymysql
+import funcions as func
+conn=pymysql.connect(host="20.126.87.93",user="delegado",password="delegado",db="RPM")
+cur=conn.cursor()
 def get_answers_bystep_adventure():
     queryAdventureSteps = f'select id_steps from STEP where id_adventure={adventure}'
 
@@ -47,13 +51,13 @@ def insertCurrentGame(idGame,idUser,idChar,idAdventure):
 def getUsers():
     '''return '''
 
-replayAdventures={1:{'idUser':'id_user','Username':'username',
+replayAdventures={1:{'idUser':1,'Username':'username',
                           'IdADventure':'id_adventure',
                           'Name':'adventure_name',
                           'date':'date',
                           'idCharacter':'id_character',
                           'CharacterName':'character_name'},
-                2:{'idUser':'id_user2','Username':'username2',
+                2:{'idUser':  2,'Username':'username2',
                           'IdADventure':'id_adventure',
                           'Name':'adventure_name',
                           'date':'date',
@@ -75,11 +79,12 @@ def getUserIds():
     return usersAndIds
 #print(getUserIds())
 
-def insertUser(id,user,password):
-    queryUsersInsert=f"insert into USERS values ({id},{user},{password})"
-    cur.execute(queryUsersInsert)
+def insertUser(user,password):
+    queryUser = f"insert into USER(username,password) values ('{user}','{password}')"
+    cur.execute(queryUser)
     conn.commit()
     conn.close()
+    print("Usuario creado con exito")
 
 def get_table(query):
     tupla=()
@@ -93,11 +98,11 @@ def checkUserbdd(user,password):
     queryCorrectUser=f"select username from USER"
     cur.execute(queryCorrectUser)
     Corruser = cur.fetchall()
+    print(Corruser)
     Correctuser=[]
     tpassword=[]
     for i in Corruser:
-        for j in i:
-            Correctuser.append(j)
+        Correctuser.append(i[0])
     if user not in Correctuser:
         return 0
     elif user in Correctuser:
@@ -105,12 +110,12 @@ def checkUserbdd(user,password):
         cur.execute(queryCorrectPassword)
         Correctpassword = cur.fetchall()
         for i in Correctpassword:
-            for j in i:
-                tpassword.append(j)
+            tpassword.append(i[0])
         if password in tpassword:
             return 1
         else:
             return -1
+#checkUserbdd("Pablo","Matterblast")
 
 
 def setIdGame():
@@ -143,54 +148,72 @@ def getHeader(text):
 def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
     texts=[]
     totallenght=0
-    for i in range(0,len(tupla_texts)):
-        texts.append(tupla_texts[i].split(" "))
-    for j in range(0, len(texts)):
-        totallenght=0
-        for i in texts[j]:
-            if j!=len(texts):
-                if totallenght + len(i) > tupla_sizes[j]:
-                    totallenght=0
-                    print("\n" + i, end=" ")
-                    totallenght = len(i) + 2
-                else:
-                    print(i, end=" ")
-                    totallenght += len(i) + 1
-        print()
-text = "Seguro que más de uno recuerda aquellos libros en los que podías elegir cómo seguir con la aventura que estabas viviendo simplemente"
-#getFormatedBodyColumns((text,text,text),(20,30,50),margin=2)
-
-def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
-    texts=[]
-    totallenght=0
     linea=""
     textLinea=[]
     textosLineas=[]
     for i in range(0,len(tupla_texts)):
         texts.append(tupla_texts[i].split(" "))
     for j in range(0, len(texts)):
-        textLinea.append(linea)
+        textLinea.append(linea+" "*(tupla_sizes[j]+margin-len(linea)))
         linea = ""
         textLinea=[]
         for i in texts[j]:
             if j!=len(texts):
                 if len(linea)+len(i)+1+margin > tupla_sizes[j]:
-                    linea+=" "*margin
+                    linea+=" "*(tupla_sizes[j]+margin-len(linea))
                     textLinea.append(linea)
                     linea = ""
                     linea += i + " "
+                #elif len(tupla_texts[j])<tupla_sizes[j]:
+                    #linea = tupla_texts[j]+" "*(tupla_sizes[j]+margin-len(linea))
+                    #textLinea.append(linea)
+                    #linea=""
                 else:
                     linea+=i+" "
         textosLineas.append(textLinea)
-    print(textosLineas)
+    textLinea.append(linea+" "*(tupla_sizes[j]+margin-len(linea)))
+    if len(textosLineas[0])>len(textosLineas[1]) and len(textosLineas[0])>len(textosLineas[2]):
+        c=0
+    elif len(textosLineas[1])>len(textosLineas[0]) and len(textosLineas[1])>len(textosLineas[2]):
+        c=1
+    else:
+        c=2
+    for i in range(0,len(textosLineas[c])):
+        '''if i>=len(textosLineas[0]):
+            print(" "*tupla_sizes[0], end="")
+            if i>=len(textosLineas[1]):
+                print(" " * tupla_sizes[1]+" "*tupla_sizes[2], end="")'''
+        if i<len(textosLineas[0]):
+            if i>=len(textosLineas[1]):
+                print(textosLineas[0][i])
+            else:
+                print(textosLineas[0][i], end="")
+        if i<len(textosLineas[1]):
+            if i>=len(textosLineas[2]):
+                print(textosLineas[1][i])
+            else:
+                print(textosLineas[1][i], end="")
+        if i < len(textosLineas[2]):
+            print(textosLineas[2][i])
 text = "Seguro que más de uno recuerda aquellos libros en los que podías elegir cómo seguir con la aventura que estabas viviendo simplemente"
-getFormatedBodyColumns((text,text,text),(20,30,50),margin=2)
+#getFormatedBodyColumns((text,text,text),(20,30,50),margin=2)
 
-'''for i in range(len(tupla_texts)):
-    while totallenght<tupla_sizes[i]:
-        c+=1
-        print(tupla_texts[i][c], end=" ")
-    tupla_sizes[i]+=tupla_sizes[i]'''
+adventures={1:{'Name': "Este muerto esta muy vivo",
+                        'Description':"Beowulf, se embarca en la busqueda de la espada llamada la Ira de Los Cielos",
+                        'Characters': "Hola"},
+            2:{"Name": "La Matanza de Texas",
+               "Description": "Mario Vaquerizo, se enfrenta al horror"}
+            }
+def getFormatedAdventures(adventures):
+    print("="*60+"Adventures"+"="*60)
+    getFormatedBodyColumns(("Id Adventure", "Adventure", "Description"), (15, 25, 50), margin=0)
+    print("*"*130)
+    for i in adventures:
+        getFormatedBodyColumns((str(i), adventures[i]['Name'], adventures[i]['Description']), (15, 20, 50), margin=0)
+#getFormatedAdventures(adventures)
+
+def getFormatedAnswers(idAnswer,text,lenLine,leftMargin):
+    '''return '''
 
 def getHeadeForTableFromTuples(t_name_columns,t_size_columns,title=""):
     total=0
@@ -207,6 +230,9 @@ def getHeadeForTableFromTuples(t_name_columns,t_size_columns,title=""):
             print(t_name_columns[i],end=(" " * space[i]))
     print("*"*total)
 #getHeadeForTableFromTuples(("column1", "column2", "column3"), (20, 40, 30))
+
+def getTableFromDict(tuple_of_keys,weigth_of_columns,dict_of_data):
+    '''return '''
 
 def getOpt(textOpts="",inputOptText="",rangeList=[],exceptions=[]):
     print(textOpts)
@@ -283,6 +309,10 @@ def userExists(user):
         return True
     else:
         return False
+
+
+
+
 
 
 

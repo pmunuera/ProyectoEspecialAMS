@@ -36,10 +36,7 @@ while opc==False:
                     password = input("Password: ")
                     passwordcheck = func.checkPassword(password)
                 if usercheck and passwordcheck:
-                    queryUser = f"insert into USER(username,password) values ('{user}','{password}')"
-                    cur.execute(queryUser)
-                    conn.commit()
-                    print("Usuario creado con exito")
+                    func.insertUser(user,password)
                     opc=False
             else:
                 print("Este usuario ya existe")
