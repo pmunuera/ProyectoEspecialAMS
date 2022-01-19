@@ -44,11 +44,9 @@ create table if not exists ANSWER (
 
 create table if not exists GAME (
 	id_game int ,
-    date timestamp,
     id_adventure int ,
-    username int ,
+    id_user int ,
     id_character int ,
-    id_step int ,
     date_creation timestamp,
     user_modified varchar(15),
     date_modified date
@@ -59,4 +57,9 @@ create table if not exists HAS (
     date_creation timestamp,
     user_modified varchar(15),
     date_modified date
+);
+create table if not exists HISTORY (
+	id_game int,
+    id_answer int,
+    id_step int
 );
