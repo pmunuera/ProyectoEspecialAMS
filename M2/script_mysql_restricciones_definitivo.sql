@@ -31,7 +31,9 @@ alter table ANSWER
 	modify id_answer int unsigned auto_increment primary key,
 	modify description varchar(100) not null,
 	modify id_step_resolution int unsigned,
+    modify id_current_step int unsigned,
 	add constraint FK_ANSWER_STEP foreign key (id_step_resolution) references STEP(id_step),
+    add constraint FK_ANSWER_CURRENT_STEP foreign key (id_current_step) references STEP(id_step),
 	modify date_creation timestamp default localtimestamp();
 
 alter table GAME 

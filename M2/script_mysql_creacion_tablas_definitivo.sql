@@ -37,6 +37,7 @@ create table if not exists ANSWER (
 	id_answer int ,
     description varchar(100),
     id_step_resolution int ,
+    id_current_step int,
     date_creation timestamp,
     user_modified varchar(15),
     date_modified date
