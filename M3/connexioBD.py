@@ -2,7 +2,7 @@ import pymysql
 conn=pymysql.connect(host="20.126.87.93",user="delegado",password="delegado",db="RPM")
 cur=conn.cursor()
 
-query='select * from RPM.CHARACTER'
+query='select max(id_character) from RPM.CHARACTER'
 
 cur.execute(query)
 
@@ -13,7 +13,15 @@ print(rows)
 row1=cur.fetchone()
 print(row1)
 
-queryCorrectUser=f"select username from USER"
+queryCorrectUser=f"select * from USER"
 cur.execute(queryCorrectUser)
-username=cur.fetchall()
-print(username)
+username=cur.description
+tupla=()
+tupla1=()
+columnas = cur.description
+dades=cur.fetchall()
+for i in columnas:
+    tupla1 += (i[0],)
+tupla2=dades
+tupla+=(tupla1,tupla2)
+print(tupla)
