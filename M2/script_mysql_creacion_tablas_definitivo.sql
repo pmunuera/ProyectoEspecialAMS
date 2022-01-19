@@ -45,7 +45,7 @@ create table if not exists ANSWER (
 create table if not exists GAME (
 	id_game int ,
     id_adventure int ,
-    username int ,
+    id_user int ,
     id_character int ,
     date_creation timestamp,
     user_modified varchar(15),
