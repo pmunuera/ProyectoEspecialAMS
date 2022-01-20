@@ -20,8 +20,8 @@ for i in tupla:
     tupla2=cur.fetchall()
     for j in tupla2:
         adventures[i[0]]['Characters'] = j[0]
-print(adventures)
-
+#print(adventures)
+#func.getFormatedAdventures(adventures)
 characters={
 
     }
@@ -34,7 +34,7 @@ rows=cur.fetchall()
 for i in rows:
     characters[i[0]]=i[1]
 
-print(characters)
+#print(characters)
 
 Answers_ByStep_Adventure={
 }
@@ -43,16 +43,18 @@ query='select * from ANSWER'
 cur.execute(query)
 
 tupla=cur.fetchall()
-
+print(tupla)
 for i in tupla:
     Answers_ByStep_Adventure[i[0],i[2]]={}#1:{}
     Answers_ByStep_Adventure[i[0],i[2]]['Description']=i[1]
+    query2=f"select description from STEP where id_step={i[2]}"
+    cur.execute(query2)
+    tupla2 = cur.fetchall()
+    for j in tupla2:
+        Answers_ByStep_Adventure[i[0], i[2]]['Resolution_Answer']=j[0]
     Answers_ByStep_Adventure[i[0], i[2]]['NextStep_Adventure'] = i[2]
 
-
-ByStep_Adventure={id_ByStep_Adventure:{'Description':Description,
-                                       'answers_in_step':answers_in_step,
-                                       "Final_Step":Final_Step}
+ByStep_Adventure={
                   }
 query='select * from STEP'
 
@@ -60,10 +62,11 @@ cur.execute(query)
 
 tupla=cur.fetchall()
 
+
 for i in tupla:
     ByStep_Adventure[i[0]]={}#1:{}
     ByStep_Adventure[i[0]]['Description']=i[1]
-    query2=f"select * from ANSWER where id_step_resolution in '{i[0]}'"
+    query2=f"select * from ANSWER where id_step_resolution in {i}"
     cur.execute(query2)
     tupla2 = cur.fetchall()
     ByStep_Adventure[i[0]]['answers_in_step']=()
@@ -73,8 +76,10 @@ for i in tupla:
         c+=1
     ByStep_Adventure[i[0]]['Final_Step'] = i[2]
 
+print(ByStep_Adventure)
 
-replayAdventures={idGame:{'idUser':id_user,'Username':username,
+
+'''replayAdventures={idGame:{'idUser':id_user,'Username':username,
                           'IdAdventure':id_adventure,
                           'Name':adventure_name,
                           'date':date,
@@ -100,4 +105,4 @@ for i in tupla:
         replayAdventures[i[0]]['Name'] = g[0]
     replayAdventures[i[0]]['date'] = i[5]
     replayAdventures[i[0]]['idCharacter'] = i[4]
-    replayAdventures[i[0]]['CharacterName'] = i[3]
+    replayAdventures[i[0]]['CharacterName'] = i[3]'''

@@ -103,6 +103,7 @@ def get_table(query):
     tupla2=dades
     tupla+=(tupla1,tupla2)
     return tupla
+print(get_table("select * from ADVENTURE"))
 
 def checkUserbdd(user,password):
     queryCorrectUser=f"select username from USER"
@@ -209,12 +210,12 @@ def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
 text = "Seguro que más de uno recuerda aquellos libros en los que podías elegir cómo seguir con la aventura que estabas viviendo simplemente"
 #getFormatedBodyColumns((text,text,text),(20,30,50),margin=2)
 
-#adventures={1:{'Name': "Este muerto esta muy vivo",
-                      #  'Description':"Beowulf, se embarca en la busqueda de la espada llamada la Ira de Los Cielos",
-                       # 'Characters': "Hola"},
-            #2:{"Name": "La Matanza de Texas",
-             #  "Description": "Mario Vaquerizo, se enfrenta al horror"}
-            #}
+adventures={1:{'Name': "Este muerto esta muy vivo",
+                      'Description':"Beowulf, se embarca en la busqueda de la espada llamada la Ira de Los Cielos",
+                       'Characters': "Hola"},
+            2:{"Name": "La Matanza de Texas",
+               "Description": "Mario Vaquerizo, se enfrenta al horror"}
+            }
 def getFormatedAdventures(adventures):
     print("="*60+"Adventures"+"="*60)
     texto=("Id Adventure", "Adventure", "Description")
@@ -226,7 +227,6 @@ def getFormatedAdventures(adventures):
         getFormatedBodyColumns((str(i), adventures[i]['Name'], adventures[i]['Description']), (15, 30, 50), margin=0)
 #getFormatedAdventures(adventures)
 
-'''MIRAR'''
 def getFormatedAnswers(idAnswer,text,lenLine,leftMargin):
     query = f"select id_answer,description from ANSWER where id_current_step={idAnswer}"
 
@@ -313,7 +313,20 @@ exceptions = ["w", "e", -1]
 #opc=getOpt(textOpts, inputOptText, lista, exceptions)
 
 def getFormatedTable(queryTable,title=""):
-    '''return '''
+    title=queryTable[0]
+    c = 0
+    for i in title:
+        c+=1
+    print("=" * 30*c)
+    for i in title:
+        print(i.ljust(30),end="")
+    print()
+    print("*" * 30*c)
+    for i in queryTable[1]:
+        getFormatedBodyColumns((str(i[0]), str(i[1]), str(i[2])), (30, 30, 30), margin=0)
+
+
+getFormatedTable(get_table("select id_answer, description, id_step_resolution from ANSWER"))
 
 def checkPassword(password):
     compPassword = False

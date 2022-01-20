@@ -2,9 +2,9 @@ import pymysql
 import funcions as func
 conn=pymysql.connect(host="20.126.87.93",user="delegado",password="delegado",db="RPM")
 cur=conn.cursor()
-textOpts = "\n1)Login\n2)Create user\n3)Show Adventures\n4)Exit"
+textOpts = "\n1)Login\n2)Create user\n3)Show Adventures\n4)Reports\n5)Exit"
 inputOptText = "\nElige tu opción: "
-lista = [1, 2, 3, 4]
+lista = [1, 2, 3, 4,5]
 exceptions = ["w", "e", -1]
 opc=False
 while opc==False:
