@@ -56,7 +56,7 @@ while opc==False:
                     replay = [i[0], i[2]]
                     crrect = True
             if crrect:
-                historylist = func.getHistory(replay[0])
+                historylist = func.getChoices(replay[0])
                 print(str(replay[1]).center(100, "*"))
                 for i in range(len(historylist)):
                     queryreplays = f"select description from STEP where id_step='{historylist[i][0]}'"

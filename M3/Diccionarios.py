@@ -3,9 +3,7 @@ import funcions as func
 conn=pymysql.connect(host="20.126.87.93",user="delegado",password="delegado",db="RPM")
 cur=conn.cursor()
 
-adventures={id_adventure:{'Name': adventure_name,
-                          'Description':adventure_description,
-                          'Characters': adventure_characters}
+adventures={
             }
 query='select * from ADVENTURE'
 
@@ -17,11 +15,12 @@ for i in tupla:
     adventures[i[0]]={}#1:{}
     adventures[i[0]]['Name']=i[1]
     adventures[i[0]]['Description'] = i[2]
-    query2=f"select name from CHARACTER where id_character in (select id_character from HAS where id_adventure='{i[0]}')"
+    query2=f"select name from `CHARACTER` where id_character in (select id_character from ARE_AVAILABLE where id_adventure='{i[0]}')"
     cur.execute(query2)
     tupla2=cur.fetchall()
     for j in tupla2:
-        adventures[i[0]]['Characters'] = j[1]
+        adventures[i[0]]['Characters'] = j[0]
+print(adventures)
 
 characters={
 
@@ -37,10 +36,7 @@ for i in rows:
 
 print(characters)
 
-Answers_ByStep_Adventure={{idAnswers_ByStep_Adventure, idByStep_Adventure}:{
-                            'Description':description,
-                            'Resolution_Answer':Resolution_Answer
-                            'NextStep_Adventure':NextStep}
+Answers_ByStep_Adventure={
 }
 query='select * from ANSWER'
 
@@ -49,9 +45,10 @@ cur.execute(query)
 tupla=cur.fetchall()
 
 for i in tupla:
-    Answers_ByStep_Adventure[{i[0],i[2]}]={}#1:{}
-    Answers_ByStep_Adventure[{i[0],i[2]}]['Description']=i[1]
-    Answers_ByStep_Adventure[{i[0], i[2]}]['NextStep_Adventure'] = i[2]
+    Answers_ByStep_Adventure[i[0],i[2]]={}#1:{}
+    Answers_ByStep_Adventure[i[0],i[2]]['Description']=i[1]
+    Answers_ByStep_Adventure[i[0], i[2]]['NextStep_Adventure'] = i[2]
+
 
 ByStep_Adventure={id_ByStep_Adventure:{'Description':Description,
                                        'answers_in_step':answers_in_step,

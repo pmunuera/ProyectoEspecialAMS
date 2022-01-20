@@ -40,7 +40,7 @@ def get_characters():
 def getReplayAdventures():
     return ReplayAdventures
 
-def getChoices():
+def getChoices(game):
     queryChoices=f"select id_answer,id_step from HISTORY where id_game={game}"
     cur.execute(queryChoices)
     tupla = cur.fetchall()
@@ -170,7 +170,7 @@ def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
     for i in range(0,len(tupla_texts)):
         texts.append(tupla_texts[i].split(" "))
     for j in range(0, len(texts)):
-        textLinea.append(linea+" "*(tupla_sizes[j]+margin-len(linea)))
+        textLinea.append(linea+" "*(tupla_sizes[j-1]+margin-len(linea)))
         linea = ""
         textLinea=[]
         c=0
@@ -178,7 +178,7 @@ def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
             c+=1
             if len(tupla_texts[j])<tupla_sizes[j]:
                 if c==len(texts[j]):
-                    linea += i+" " * (tupla_sizes[j] + margin - len(linea))
+                    linea += i+" " * ((tupla_sizes[j] + margin) - len(linea))
                     textLinea.append(linea)
                     linea = ""
                 else:
@@ -199,7 +199,7 @@ def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
     else:
         c=2
     for j in range(0,len(textosLineas)):
-        if len(textosLineas[j])<len(textosLineas[c]):
+        if len(textosLineas[j])<=len(textosLineas[c]):
             for i in range(0,len(textosLineas[c])-len(textosLineas[j])):
                 textosLineas[j].append(" "*tupla_sizes[j])
     for i in range(0,len(textosLineas[c])):
@@ -207,37 +207,58 @@ def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
         print(textosLineas[1][i], end="")
         print(textosLineas[2][i])
 text = "Seguro que más de uno recuerda aquellos libros en los que podías elegir cómo seguir con la aventura que estabas viviendo simplemente"
-getFormatedBodyColumns((text,text,text),(20,30,50),margin=2)
+#getFormatedBodyColumns((text,text,text),(20,30,50),margin=2)
 
-adventures={1:{'Name': "Este muerto esta muy vivo",
-                        'Description':"Beowulf, se embarca en la busqueda de la espada llamada la Ira de Los Cielos",
-                        'Characters': "Hola"},
-            2:{"Name": "La Matanza de Texas",
-               "Description": "Mario Vaquerizo, se enfrenta al horror"}
-            }
+#adventures={1:{'Name': "Este muerto esta muy vivo",
+                      #  'Description':"Beowulf, se embarca en la busqueda de la espada llamada la Ira de Los Cielos",
+                       # 'Characters': "Hola"},
+            #2:{"Name": "La Matanza de Texas",
+             #  "Description": "Mario Vaquerizo, se enfrenta al horror"}
+            #}
 def getFormatedAdventures(adventures):
     print("="*60+"Adventures"+"="*60)
-    getFormatedBodyColumns(("Id Adventure", "Adventure", "Description"), (20, 30, 50), margin=0)
+    texto=("Id Adventure", "Adventure", "Description")
+    print(texto[0].ljust(15, " "),end="")
+    print(texto[1].ljust(30," "),end="")
+    print(texto[2].ljust(50, " "))
     print("*"*130)
     for i in adventures:
-        getFormatedBodyColumns((str(i), adventures[i]['Name'], adventures[i]['Description']), (20, 30, 50), margin=0)
-getFormatedAdventures(adventures)
+        getFormatedBodyColumns((str(i), adventures[i]['Name'], adventures[i]['Description']), (15, 30, 50), margin=0)
+#getFormatedAdventures(adventures)
 
 '''MIRAR'''
 def getFormatedAnswers(idAnswer,text,lenLine,leftMargin):
-    '''return '''
-    text = text.split(" ")
+    query = f"select id_answer,description from ANSWER where id_current_step={idAnswer}"
+
+    cur.execute(query)
+
+    rows = cur.fetchall()
+    id=[]
+
+    for i in rows:
+        for j in i:
+            id.append(i[0])
+            text.append(i[1].split(" "))
+            break
     totallenght = 0
-    print(" "*leftMargin, end="")
     for i in range(0, len(text)):
-        if totallenght + len(text[i]) > lenLine:
-            print(" "*leftMargin+"\n" + text[i], end=" ")
-            totallenght = len(text[i]) + 1
-        else:
-            print(text[i], end=" ")
-            totallenght += len(text[i]) + 1
-    print()
-#getFormatedAnswers(1,text,30,2)
+        print(" " * leftMargin + str(id[i]) + ")", end="")
+        for j in range(len(text[i])):
+            if totallenght + len(text[i][j]) > lenLine:
+                totallenght = 0
+                print("\n" +" "*leftMargin+ text[i][j], end=" ")
+                totallenght += len(text[i]) + 3
+            else:
+                print(text[i][j], end=" ")
+                totallenght += len(text[i]) + 1
+        totallenght = 2
+        print()
+query=f"select description from STEP where id_step=1"
+cur.execute(query)
+
+row = cur.fetchall()
+#formatText(row[0][0],60,"\n")
+#getFormatedAnswers(1,[],30,5)
 
 def getHeadeForTableFromTuples(t_name_columns,t_size_columns,title=""):
     total=0
@@ -290,6 +311,9 @@ inputOptText = "\nElige tu opción: "
 lista = [1, 2, 3, 4]
 exceptions = ["w", "e", -1]
 #opc=getOpt(textOpts, inputOptText, lista, exceptions)
+
+def getFormatedTable(queryTable,title=""):
+    '''return '''
 
 def checkPassword(password):
     compPassword = False
@@ -355,7 +379,6 @@ def getGames():
     games = cur.fetchall()
     return games
 
-
 def getHistory(id_game):
     historyend = []
     queryhistory = f"select id_step,id_answer from HISTORY where id_game='{id_game}'"
@@ -364,6 +387,7 @@ def getHistory(id_game):
     for i in history:
         historyend.append(i)
     return historyend
+#print(getChoices(1))
 
 
 
