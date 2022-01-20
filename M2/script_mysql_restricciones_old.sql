@@ -45,7 +45,14 @@ alter table GAME
 	add constraint FK_GAME_USER foreign key (id_user) references USER(id_user),
 	add constraint FK_GAME_CHARACTER foreign key (id_character) references RPM.CHARACTER(id_character),
 	modify date_creation timestamp default localtimestamp();
-  
+
+alter table HAS 
+	modify id_adventure int unsigned not null,
+	modify id_character int unsigned not null,
+	add constraint FK_HAS_ADVENTURE foreign key (id_adventure) references ADVENTURE(id_adventure),
+	add constraint FK_HAS_CHARACTER foreign key (id_character) references RPM.CHARACTER(id_character),
+	modify date_creation timestamp default localtimestamp();
+    
 alter table HISTORY 
 	modify id_game int unsigned,
     modify id_answer int unsigned,
@@ -55,10 +62,3 @@ alter table HISTORY
     add constraint FK_ANSWER_HISTORY foreign key (id_answer) references ANSWER(id_answer),
     add constraint FK_STEP_HISTORY foreign key (id_step) references STEP(id_step);
     
-alter table ARE_AVAILABLE
-	modify id_character int unsigned not null,
-    modify id_adventure int unsigned not null,
-    modify date_creation timestamp default localtimestamp(),
-    add primary key (id_character,id_adventure),
-    add constraint FK_CHARACTER_ARE_AVAILABLE foreign key (id_character) references RPM.CHARACTER(id_character),
-    add constraint FK_ADVENTURE_ARE_AVAILABLE foreign key (id_adventure) references ADVENTURE(id_adventure);
