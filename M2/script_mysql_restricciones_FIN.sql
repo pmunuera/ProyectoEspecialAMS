@@ -16,20 +16,20 @@ alter table RPM.CHARACTER
 
 alter table ADVENTURE 
 	modify id_adventure int unsigned auto_increment primary key,
-	modify name varchar(40) not null unique,
-	modify description varchar(100) not null,
+	modify name varchar(750) not null unique,
+	modify description varchar(750) not null,
 	modify date_creation timestamp default localtimestamp();
 
 alter table STEP 
 	modify id_step int unsigned auto_increment primary key,
-	modify description varchar(100) not null,
+	modify description varchar(750) not null,
 	modify id_adventure int unsigned,
 	add constraint FK_ADVENTURE_STEP foreign key (id_adventure) references ADVENTURE(id_adventure),
 	modify date_creation timestamp default localtimestamp();
 
 alter table ANSWER 
 	modify id_answer int unsigned auto_increment primary key,
-	modify description varchar(100) not null,
+	modify description varchar(750) not null,
 	modify id_step_resolution int unsigned,
     modify id_current_step int unsigned,
 	add constraint FK_ANSWER_STEP foreign key (id_step_resolution) references STEP(id_step),

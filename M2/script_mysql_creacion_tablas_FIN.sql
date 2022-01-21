@@ -11,7 +11,7 @@ create table if not exists USER (
 create table if not exists RPM.CHARACTER (
 	id_character int ,
     name varchar(40) ,
-    description varchar(100),
+    description varchar(750),
     date_creation timestamp,
     user_modified varchar(15),
     date_modified date
