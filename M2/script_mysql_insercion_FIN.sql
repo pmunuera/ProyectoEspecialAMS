@@ -97,7 +97,6 @@ insert ignore ANSWER (id_answer,description,id_current_step,id_step_resolution) 
     (40,"Ofrecerle ser duque",36,37),
     (41,"Ofrecerle vivir en el palacio",36,38),
     (42,"No ofrecer nada",36,39);
-select * from ANSWER;
 insert ignore GAME (id_game,id_adventure,id_user,id_character) values
 	(1,1,1,1);
 insert ignore HISTORY (id_game,id_step,id_answer) values 
