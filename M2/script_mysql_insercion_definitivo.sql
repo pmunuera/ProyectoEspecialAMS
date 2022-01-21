@@ -3,16 +3,13 @@ insert ignore RPM.CHARACTER (name,description) values
 	 ("Metagross","Pesa una tonelada y tiene poderes psiquicos."),
 	 ("Emme Tress","Provoca pesadillas y dolores de cabeza a quien batalla con el"),
 	 ("Mike","Un tirador de elite");
-select * from RPM.CHARACTER;
 insert ignore USER (username,password) values
 	("Rafa","P@ssw0rd"),
     ("root","root"),
     ("Pablo","Matterblast");
-select * from USER;
 insert ignore ADVENTURE (id_adventure,name,description) values
 	(1,"El principe Ilegitimo","Eres un principe ilegitimo que debe sobrevivir a un mundo cruel y despiadado mientras te abres camino a la cima"),
     (2,"Historia del rey","Eres el REY de Drein el cual tiene un hijo ilegítimo que podría ser una amenaza");
-select * from ADVENTURE;
 insert ignore STEP (id_step,description,final_step,id_adventure) values 
 	(1,"Eres un hijo ilegitimo de la familia real de Drein. Al ser un hijo ilegitimo de normal no tendrias que ser el sucesor pero tienes la posibilidad de serlo mediante una gerra de sucesion que eliges:",0,1),
     (2,"Al declarar tu intencion de luchar por el trono inicia una guerra en la cual tienes que que poner de tu parte la mayor cantidad de noble y soldados. Tienes la oprtunidad de ir a entablar una negociacion con un noble de grado medio y un comandante del ejercito real que eliges:",0,1),
@@ -57,7 +54,6 @@ insert ignore STEP (id_step,description,final_step,id_adventure) values
     (41,"Al mandar a las fuerzas del orden te quedas desprotegido y aprovechan ese momento para infiltrase en el castillo y matarte utilizando veneno. Fin",1,2),
     (42,"Al seguir ignorando la noticia derrepente el pueblo junto al heredero ilegitimo irrumpen dentro de castillo asi haciendo un complot contra la corona y matarte para hacer rey al heredero ilegitimo. Fin",1,2),
     (43,"Hijo ilegítimo asesinado con éxito, se acabó el problema.FIN",1,2);
-select * from STEP;
 insert ignore ANSWER (id_answer,description,id_current_step,id_step_resolution) values
 	(1,"Entablar una gerra contra el principe sucesor",1,2),
     (2,"Ser indiferente ante el trono",1,14),
@@ -104,15 +100,12 @@ insert ignore ANSWER (id_answer,description,id_current_step,id_step_resolution) 
 select * from ANSWER;
 insert ignore GAME (id_game,id_adventure,id_user,id_character) values
 	(1,1,1,1);
-select * from GAME;
 insert ignore HISTORY (id_game,id_step,id_answer) values 
 	(1,1,1),
     (1,2,4),
     (1,4,8);
-select * from HISTORY;
 insert ignore ARE_AVAILABLE (id_character,id_adventure) values
 	(1,1),
     (1,2),
     (2,2),
     (3,1);
-select * from ARE_AVAILABLE;
