@@ -1,5 +1,4 @@
 import pymysql
-import funcions as func
 conn=pymysql.connect(host="20.126.87.93",user="delegado",password="delegado",db="RPM")
 cur=conn.cursor()
 
@@ -79,16 +78,12 @@ for i in tupla:
 print(ByStep_Adventure)
 
 
-'''replayAdventures={idGame:{'idUser':id_user,'Username':username,
-                          'IdAdventure':id_adventure,
-                          'Name':adventure_name,
-                          'date':date,
-                          'idCharacter':id_character,
-                          'CharacterName':character_name}
+replayAdventures={
                   }
 query='select * from GAME'
 cur.execute(query)
 tupla=cur.fetchall()
+print(tupla)
 for i in tupla:
     replayAdventures[i[0]]={}
     query2=f"select username from USER where id_user='{i[3]}'"
@@ -98,11 +93,16 @@ for i in tupla:
     for j in tupla2:
         replayAdventures[i[0]]['Username'] = j[0]
     replayAdventures[i[0]]['IdAdventure'] = i[2]
-    query3=f"select adventure_name from ADVENTURE where id_adventure='{i[2]}'"
+    query3=f"select name from ADVENTURE where id_adventure='{i[2]}'"
     cur.execute(query3)
     tupla3=cur.fetchall()
     for g in tupla3:
         replayAdventures[i[0]]['Name'] = g[0]
-    replayAdventures[i[0]]['date'] = i[5]
-    replayAdventures[i[0]]['idCharacter'] = i[4]
-    replayAdventures[i[0]]['CharacterName'] = i[3]'''
+    replayAdventures[i[0]]['date'] = i[4]
+    replayAdventures[i[0]]['idCharacter'] = i[3]
+    query4 = f"select name from RPM.CHARACTER where id_character='{i[3]}'"
+    cur.execute(query4)
+    tupla4 = cur.fetchall()
+    for k in tupla4:
+        replayAdventures[i[0]]['CharacterName'] = k[0]
+print(replayAdventures)

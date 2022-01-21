@@ -1,8 +1,107 @@
 import pymysql
 conn=pymysql.connect(host="20.126.87.93",user="delegado",password="delegado",db="RPM")
 cur=conn.cursor()
+adventures={
+            }
+query='select * from ADVENTURE'
 
-def get_answers_bystep_adventure():
+cur.execute(query)
+
+tupla=cur.fetchall()
+
+for i in tupla:
+    adventures[i[0]]={}#1:{}
+    adventures[i[0]]['Name']=i[1]
+    adventures[i[0]]['Description'] = i[2]
+    query2=f"select name from `CHARACTER` where id_character in (select id_character from ARE_AVAILABLE where id_adventure='{i[0]}')"
+    cur.execute(query2)
+    tupla2=cur.fetchall()
+    for j in tupla2:
+        adventures[i[0]]['Characters'] = j[0]
+#print(adventures)
+#func.getFormatedAdventures(adventures)
+characters={
+
+    }
+query='select * from RPM.CHARACTER'
+
+cur.execute(query)
+
+rows=cur.fetchall()
+
+for i in rows:
+    characters[i[0]]=i[1]
+
+#print(characters)
+
+Answers_ByStep_Adventure={
+}
+query='select * from ANSWER'
+
+cur.execute(query)
+
+tupla=cur.fetchall()
+#print(tupla)
+for i in tupla:
+    Answers_ByStep_Adventure[i[0],i[2]]={}#1:{}
+    Answers_ByStep_Adventure[i[0],i[2]]['Description']=i[1]
+    query2=f"select description from STEP where id_step={i[2]}"
+    cur.execute(query2)
+    tupla2 = cur.fetchall()
+    for j in tupla2:
+        Answers_ByStep_Adventure[i[0], i[2]]['Resolution_Answer']=j[0]
+    Answers_ByStep_Adventure[i[0], i[2]]['NextStep_Adventure'] = i[2]
+'''
+ByStep_Adventure={
+                  }
+query='select * from STEP'
+
+cur.execute(query)
+
+tupla=cur.fetchall()
+
+
+for i in tupla:
+    ByStep_Adventure[i[0]]={}#1:{}
+    ByStep_Adventure[i[0]]['Description']=i[1]
+    query2=f"select * from ANSWER where id_step_resolution in {i}"
+    cur.execute(query2)
+    tupla2 = cur.fetchall()
+    ByStep_Adventure[i[0]]['answers_in_step']=()
+    c=0
+    for j in tupla2:
+        ByStep_Adventure[i[0]]['answers_in_step'][0]=j[0]
+        c+=1
+    ByStep_Adventure[i[0]]['Final_Step'] = i[2]'''
+replayAdventures={
+                  }
+query='select * from GAME'
+cur.execute(query)
+tupla=cur.fetchall()
+for i in tupla:
+    replayAdventures[i[0]]={}
+    query2=f"select username from USER where id_user='{i[3]}'"
+    cur.execute(query2)
+    tupla2=cur.fetchall()
+    replayAdventures[i[0]]['idUser']=i[3]
+    for j in tupla2:
+        replayAdventures[i[0]]['Username'] = j[0]
+    replayAdventures[i[0]]['IdAdventure'] = i[2]
+    query3=f"select name from ADVENTURE where id_adventure='{i[2]}'"
+    cur.execute(query3)
+    tupla3=cur.fetchall()
+    for g in tupla3:
+        replayAdventures[i[0]]['Name'] = g[0]
+    replayAdventures[i[0]]['date'] = i[4]
+    replayAdventures[i[0]]['idCharacter'] = i[3]
+    query4 = f"select name from `CHARACTER` where id_character='{i[3]}'"
+    cur.execute(query4)
+    tupla4 = cur.fetchall()
+    for k in tupla4:
+        replayAdventures[i[0]]['CharacterName'] = k[0]
+print(replayAdventures)
+
+def get_answers_bystep_adventure(adventure):
     queryAdventureSteps = f'select id_step from STEP where id_adventure={adventure}'
 
     cur.execute(queryAdventureSteps)
@@ -28,7 +127,7 @@ def get_bystep_adventure():
     return BySteps_Adventure
 
 '''MIRAR'''
-def get_first_step_adventure():
+def get_first_step_adventure(adventure):
     query=f"select min(id_step) from STEP where id_adventure='{adventure}'"
     cur.execute(query)
     tupla = cur.fetchall()
@@ -45,6 +144,7 @@ def getChoices(game):
     cur.execute(queryChoices)
     tupla = cur.fetchall()
     return tupla
+
 
 def getIdGames():
     query="select id_game from GAME"
@@ -103,9 +203,10 @@ def get_table(query):
     tupla2=dades
     tupla+=(tupla1,tupla2)
     return tupla
-print(get_table("select * from ADVENTURE"))
+#print(get_table("select * from ADVENTURE"))
 
 def checkUserbdd(user,password):
+    global userid
     queryCorrectUser=f"select username from USER"
     cur.execute(queryCorrectUser)
     Corruser = cur.fetchall()
@@ -151,16 +252,16 @@ def formatText(text,lenLine,split):
         else:
             print(text[i], end=" ")
             totallenght+=len(text[i])+1
-    print()
+    return ""
 #formatText("Hola soy el tipotipejo tipo amo claro",10,"\n")
 
 def getHeader(text):
-    print("*"*60)
+    print("*"*120)
     if len(text)%2==1:
-        print("=" * (30 - (len(text) // 2)) + text + "=" * (30 - (len(text) // 2+1)))
+        print("=" * (60 - (len(text) // 2)) + text + "=" * (60 - (len(text) // 2+1)))
     else:
-        print("="*(30-(len(text)//2))+text+"="*(30-(len(text)//2)))
-    print("*" * 60)
+        print("="*(60-(len(text)//2))+text+"="*(60-(len(text)//2)))
+    print("*" * 120)
 
 def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
     texts=[]
@@ -279,22 +380,26 @@ def getHeadeForTableFromTuples(t_name_columns,t_size_columns,title=""):
 def getTableFromDict(tuple_of_keys,weigth_of_columns,dict_of_data):
     for i in dict_of_data:
         print(i, end="")
-        for j in range(len(tuple_of_keys)):
+        for j in range(0,len(tuple_of_keys)):
             print(" "*((weigth_of_columns[j])-len(dict_of_data[i])),end="")
             print(dict_of_data[i][tuple_of_keys[j]], end="")
         print()
 
-diccionari= {4: {'idUser': 2, 'Username': 'Jordi', 'idAdventure': 1, 'Name': 'Este muerto esta muy vivo',
-'date': (2021, 11, 28, 18, 17, 20), 'idCharacter': 1, 'CharacterName': 'Beowulf'}, 5: {'idUser': 2, 'Username': 'Jordi',
-'idAdventure': 1, 'Name': 'Este muerto esta muy vivo', 'date': (2021, 11, 26, 13, 28, 36), 'idCharacter': 1,
-'CharacterName': 'Beowulf'}}
-tuple_of_keys = ("Username","Name","CharacterName","date")
-weigth_of_columns = (20, 30, 20, 20)
+#diccionari= {4: {'idUser': 2, 'Username': 'Jordi', 'idAdventure': 1, 'Name': 'Este muerto esta muy vivo',
+#'date': (2021, 11, 28, 18, 17, 20), 'idCharacter': 1, 'CharacterName': 'Beowulf'}, 5: {'idUser': 2, 'Username': 'Jordi',
+#'idAdventure': 1, 'Name': 'Este muerto esta muy vivo', 'date': (2021, 11, 26, 13, 28, 36), 'idCharacter': 1,
+#'CharacterName': 'Beowulf'}}
+#tuple_of_keys = ("Username","Name","CharacterName","date")
+#weigth_of_columns = (20, 30, 20, 20)
 
 #getTableFromDict(tuple_of_keys,weigth_of_columns,diccionari)
 
 
 def getOpt(textOpts="",inputOptText="",rangeList=[],exceptions=[]):
+    textOpts = "\n1)Login\n2)Create user\n3)Show Adventures\n4)Reports\n5)Exit"
+    inputOptText = "\nElige tu opción: "
+    lista = [1, 2, 3, 4,5]
+    exceptions = ["w", "e", -1]
     print(textOpts)
     op=input(inputOptText)
     rangeList=lista
@@ -306,10 +411,6 @@ def getOpt(textOpts="",inputOptText="",rangeList=[],exceptions=[]):
         print("Opcion no valida")
         return False
 
-textOpts = "\n1)Login\n2)Create user\n3)Show Adventures\n4)Exit"
-inputOptText = "\nElige tu opción: "
-lista = [1, 2, 3, 4]
-exceptions = ["w", "e", -1]
 #opc=getOpt(textOpts, inputOptText, lista, exceptions)
 
 def getFormatedTable(queryTable,title=""):
@@ -326,7 +427,7 @@ def getFormatedTable(queryTable,title=""):
         getFormatedBodyColumns((str(i[0]), str(i[1]), str(i[2])), (30, 30, 30), margin=0)
 
 
-getFormatedTable(get_table("select id_answer, description, id_step_resolution from ANSWER"))
+#getFormatedTable(get_table("select id_answer, description, id_step_resolution from ANSWER"))
 
 def checkPassword(password):
     compPassword = False
@@ -391,18 +492,234 @@ def getGames():
     cur.execute(querygameid)
     games = cur.fetchall()
     return games
-
 def getHistory(id_game):
-    historyend = []
+    historyend=[]
     queryhistory = f"select id_step,id_answer from HISTORY where id_game='{id_game}'"
     cur.execute(queryhistory)
     history = cur.fetchall()
     for i in history:
         historyend.append(i)
     return historyend
-#print(getChoices(1))
+def replay():
+        crrect = False
+        replay = []
+        getHeader("Replay Adventures")
+        getHeadeForTableFromTuples(("ID GAME","USER","ADVENTURE", "CHARACTER","DATE"),(10,20,40,20,30))
+        while True:
+            crrect = False
+            replay = []
+            for i in getGames():
+                for j in i:
+                    print(j, end=" ")
+                print()
+            option = input("What adventure you want replay?: ")
+            for i in getGames():
+                if option == str(i[0]):
+                    replay = [i[0], i[2]]
+                    crrect = True
+            if crrect:
+                historylist = getHistory(replay[0])
+                print(str(replay[1]).center(100, "*"))
+                for i in range(len(historylist)):
+                    queryreplays = f"select description from STEP where id_step='{historylist[i][0]}'"
+                    cur.execute(queryreplays)
+                    replays = cur.fetchall()
+                    print(formatText((replays[0][0]+"\n\n"),100,"\n"))
+                    queryreplays = f"select description from ANSWER where id_current_step='{historylist[i][0]}'"
+                    cur.execute(queryreplays)
+                    replays = cur.fetchall()
+                    for j in range(len(replays)):
+                        print(formatText(str(j + 1)+") "+replays[j][0],100,"\n"))
+                    print("\nOpción seleccionada: ", end="")
+                    queryreplays = f"select description from ANSWER where id_answer='{historylist[i][1]}'"
+                    cur.execute(queryreplays)
+                    replays = cur.fetchall()
+                    print(replays[0][0], "\n")
+                    aux = input("enter para continuar")
+                queryreplays = f"select s.description from STEP s inner join ANSWER a on a.id_step_resolution=s.id_step where id_answer='{historylist[len(historylist) - 1][1]}'"
+                cur.execute(queryreplays)
+                replays = cur.fetchall()
+                print(replays[0][0])
+                break
+            else:
+                print("NO VALID OPTION")
+                aux = input("Enter to continue")
 
 
 
+def checkUserbdd(user,password):
+    global userid
+    queryCorrectUser=f"select username from USER"
+    cur.execute(queryCorrectUser)
+    Corruser = cur.fetchall()
+    Correctuser=[]
+    tpassword=[]
+    for i in Corruser:
+        Correctuser.append(i[0])
+    if user not in Correctuser:
+        return 0
+    elif user in Correctuser:
+        queryCorrectPassword = f"select password from USER where username='{user}'"
+        cur.execute(queryCorrectPassword)
+        Correctpassword = cur.fetchall()
+        for i in Correctpassword:
+            tpassword.append(i[0])
+        if password in tpassword:
+            queryuserid = f"select id_user from USER where username='{user}'"
+            cur.execute(queryuserid)
+            userid = cur.fetchall()
+            return 1
+        else:
+            return -1
 
+def getAdventures(char):
+    queryadventures = f"select a.id_adventure,a.name,a.description from ADVENTURE a inner join ARE_AVAILABLE r on r.id_adventure=a.id_adventure where r.id_character='{char}'"
+    cur.execute(queryadventures)
+    adv = cur.fetchall()
+    return adv
+def getCharacter():
+    querychar = f"select id_character,name,description from RPM.CHARACTER"
+    cur.execute(querychar)
+    character_tuple = cur.fetchall()
+    return character_tuple
+def choosechar(tuplee):
+    global charid
+    global charselect
+    getHeadeForTableFromTuples(("ID","NAME","DESCRIPTION"),(15,20,30))
+    #print("ID".center(15),"NAME".center(20),"DESCRIPTION".center(30))
+    for j in tuplee:
+        print(str(j[0]),str(j[1]).rjust(20),str(j[2]).rjust(30))
+    option=input("Choose your character: ")
+    for i in tuplee:
+        if str(i[0])==option:
+            charselect=i[1]
+            charid=i[0]
+            return i[0]
+    print("NOT VALID OPTION")
+    aux=input("Enter to try again")
+    return choosechar(tuplee)
+def chooseadventure(characterselected):
+    global advselect
+    getHeadeForTableFromTuples(("ID","NAME","DESCRIPTION"),(15,20,30))
+    for j in getAdventures(characterselected):
+        print(str(j[0]).center(15), str(j[1]).center(20), str(j[2]).center(30))
+    option=input("Choose the adventure: ")
+    for i in getAdventures(characterselected):
+        if str(i[0])==option:
+            advselect=i[0]
+            print("THE ADVENTURE BEGIN".center(60),"\n",str(i[1]).center(60))
+            return characterselected,i[0],initialsteep(i[0])
+    print("NOT VALID OPTION")
+    aux=input("Enter to try again")
+    return chooseadventure(characterselected)
+def initialsteep(id_adventure):
+    queryplay = f"select s.id_step from STEP s where s.id_adventure='{id_adventure}' group by s.id_step order by count(s.id_step) desc limit 1"
+    cur.execute(queryplay)
+    step = cur.fetchall()
+    return step[0]
+def answersingame(idstep):
+    queryans = f"select a.description,a.id_answer,a.id_step_resolution from ANSWER a inner join STEP s on s.id_step=a.id_current_step where a.id_current_step='{idstep}'"
+    cur.execute(queryans)
+    ans = cur.fetchall()
+    return ans
+def playgame(adventureandchar):
+    global history_insert
+    global userid
+    global charid
+    queryplay = f"select description,final_step,id_step,id_adventure from STEP where id_step='{adventureandchar[2][0]}'"
+    cur.execute(queryplay)
+    statement = cur.fetchall()
+    print(statement[0][0])
+    if statement[0][1]==1:
+        userid=userid[0][0]
+        queryinsert = f"insert ignore GAME (id_adventure,id_user,id_character) values ('{adventureandchar[1][0]}','{userid}','{charid}')"
+        cur.execute(queryinsert)
+        conn.commit()
+        querymax = f"select max(id_game) from GAME"
+        cur.execute(querymax)
+        maxy = cur.fetchall()
+        maxy = maxy[0][0]
+        for i in history_insert:
+            queryinsert = f"insert ignore HISTORY (id_game,id_step,id_answer) values ('{maxy}','{i[0]}','{i[1]}')"
+            cur.execute(queryinsert)
+            conn.commit()
+        return "THE END"
+        history_insert=[]
+    print("\nQue debería hacer ",charselect," ?\n")
+    while True:
+        answerslist=[]
+        for i in answersingame(statement[0][2]):
+            answerslist.append(i)
+            print(len(answerslist)," ",i[0])
+        option=input("Option: ")
+        for i in range(1, len(answerslist) + 1):
+            if option==str(i):
+                history_insert.append([adventureandchar[2][0],answerslist[i-1][1]])
+                return playgame([[adventureandchar[0]],[adventureandchar[1]],[answerslist[i-1][2]]])
+        print("NOT VALID OPTION!")
+        aux = input("Enter to try again")
+charid=0
+userid=0
+charselect=""
+advselect=0
+history_insert=[]
+check=-1
 
+#print(playgame(chooseadventure(choosechar(getCharacter()))))
+
+def reportsmenu():
+    getHeader("MENU REPORTS")
+    print("\n\n1) Most used answer\n2) Player with more played games\n3) Games played by user\n4) Back".center(80))
+    option=input("\nChoose: ".center(80))
+    if option=="1":
+        return mostusedanswer()
+    elif option=="2":
+        return mostplayerplays()
+    elif option == "3":
+        return gamesbyplayer()
+    elif option == "4":
+        return "TURNING BACK"
+    else:
+        print("INVALID OPTION")
+        aux=input("ENTER TO TRY AGAIN")
+        return reportsmenu()
+def mostusedanswer():
+    querymostansw = f"select count(h.id_answer),a.description from HISTORY h inner join ANSWER a on a.id_answer=h.id_answer group by h.id_answer order by count(h.id_answer) desc limit 1"
+    cur.execute(querymostansw)
+    mostansw = cur.fetchall()
+    queryCorrectadv = f"select a.name from ADVENTURE a inner join STEP s on a.id_adventure=s.id_adventure inner join ANSWER r on s.id_step=r.id_current_step where r.description='{mostansw[0][1]}'"
+    cur.execute(queryCorrectadv)
+    adv = cur.fetchall()
+    getHeadeForTableFromTuples(("ANSWER","ADVENTURE","TIMES CHOOSED"),(30,30,30))
+    getFormatedBodyColumns((str(mostansw[0][1]),str(adv[0][0]),str(mostansw[0][0])),(30,30,30))
+    print()
+    aux=input("Enter to go back")
+    return reportsmenu()
+def mostplayerplays():
+    queryuserplays = f"select u.username,count(g.id_user) from GAME g inner join USER u on g.id_user=u.id_user group by g.id_user order by count(g.id_user) desc limit 1"
+    cur.execute(queryuserplays)
+    bstuser = cur.fetchall()
+    getHeadeForTableFromTuples(("NAME", "PLAYS"), (30, 30))
+    #print("NAME".rjust(30), "PLAYS".rjust(30))
+    print(str(bstuser[0][0]), str(bstuser[0][1]).rjust(30))
+    aux=input("Enter to go back")
+    return reportsmenu()
+def gamesbyplayer():
+    user=input("Please insert user to search: ")
+    queryuserplays = f"select username,id_user from USER"
+    cur.execute(queryuserplays)
+    bbdduser = cur.fetchall()
+    for i in bbdduser:
+        if str(i[0])==user:
+            querycount = f"select count(id_user) from GAME where id_user='{i[1]}'"
+            cur.execute(querycount)
+            cnt = cur.fetchall()
+            cnt=cnt[0][0]
+            getHeadeForTableFromTuples(("USER", "PLAYS"), (30, 30))
+            print(str(user),str(cnt).rjust(30))
+            aux=input("Enter to go back")
+            return reportsmenu()
+    print("USER NOT EXISTS")
+    aux=input("Enter to try again")
+    return gamesbyplayer()
+#reportsmenu()
