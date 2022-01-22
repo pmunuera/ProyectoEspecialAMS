@@ -1,6 +1,7 @@
 import pymysql
 conn=pymysql.connect(host="20.126.87.93",user="delegado",password="delegado",db="RPM")
 cur=conn.cursor()
+
 adventures={
             }
 query='select * from ADVENTURE'
@@ -18,8 +19,7 @@ for i in tupla:
     tupla2=cur.fetchall()
     for j in tupla2:
         adventures[i[0]]['Characters'] = j[0]
-#print(adventures)
-#func.getFormatedAdventures(adventures)
+
 characters={
 
     }
@@ -32,7 +32,6 @@ rows=cur.fetchall()
 for i in rows:
     characters[i[0]]=i[1]
 
-#print(characters)
 
 Answers_ByStep_Adventure={
 }
@@ -41,7 +40,7 @@ query='select * from ANSWER'
 cur.execute(query)
 
 tupla=cur.fetchall()
-#print(tupla)
+
 for i in tupla:
     Answers_ByStep_Adventure[i[0],i[2]]={}#1:{}
     Answers_ByStep_Adventure[i[0],i[2]]['Description']=i[1]
@@ -51,7 +50,7 @@ for i in tupla:
     for j in tupla2:
         Answers_ByStep_Adventure[i[0], i[2]]['Resolution_Answer']=j[0]
     Answers_ByStep_Adventure[i[0], i[2]]['NextStep_Adventure'] = i[2]
-'''
+
 ByStep_Adventure={
                   }
 query='select * from STEP'
@@ -60,24 +59,25 @@ cur.execute(query)
 
 tupla=cur.fetchall()
 
-
 for i in tupla:
     ByStep_Adventure[i[0]]={}#1:{}
-    ByStep_Adventure[i[0]]['Description']=i[1]
-    query2=f"select * from ANSWER where id_step_resolution in {i}"
+    ByStep_Adventure[i[0]]['Description']=i[2]
+    query2=f"select * from ANSWER where id_current_step in ({i[0]})"
     cur.execute(query2)
     tupla2 = cur.fetchall()
     ByStep_Adventure[i[0]]['answers_in_step']=()
-    c=0
     for j in tupla2:
-        ByStep_Adventure[i[0]]['answers_in_step'][0]=j[0]
-        c+=1
-    ByStep_Adventure[i[0]]['Final_Step'] = i[2]'''
+        ByStep_Adventure[i[0]]['answers_in_step']+=(j[0],)
+    ByStep_Adventure[i[0]]['Final_Step'] = i[1]
+
+
+
 replayAdventures={
                   }
 query='select * from GAME'
 cur.execute(query)
 tupla=cur.fetchall()
+
 for i in tupla:
     replayAdventures[i[0]]={}
     query2=f"select username from USER where id_user='{i[3]}'"
@@ -94,12 +94,11 @@ for i in tupla:
         replayAdventures[i[0]]['Name'] = g[0]
     replayAdventures[i[0]]['date'] = i[4]
     replayAdventures[i[0]]['idCharacter'] = i[3]
-    query4 = f"select name from `CHARACTER` where id_character='{i[3]}'"
+    query4 = f"select name from RPM.CHARACTER where id_character='{i[3]}'"
     cur.execute(query4)
     tupla4 = cur.fetchall()
     for k in tupla4:
         replayAdventures[i[0]]['CharacterName'] = k[0]
-print(replayAdventures)
 
 def get_answers_bystep_adventure(adventure):
     queryAdventureSteps = f'select id_step from STEP where id_adventure={adventure}'
@@ -117,8 +116,7 @@ def get_answers_bystep_adventure(adventure):
     rowsAdventureAnswer = cur.fetchall()
     for i in rowsAdventureSteps:
         adventrureAnswerStep=i[0]
-
-    return Answers_ByStep_Adventure[{adventrureAnswer,adventrureAnswerStep}]
+    return Answers_ByStep_Adventure[adventrureAnswer,adventrureAnswerStep]
 
 def get_adventures_with_chars():
     return adventures
@@ -126,12 +124,11 @@ def get_adventures_with_chars():
 def get_bystep_adventure():
     return BySteps_Adventure
 
-'''MIRAR'''
-def get_first_step_adventure(adventure):
-    query=f"select min(id_step) from STEP where id_adventure='{adventure}'"
-    cur.execute(query)
-    tupla = cur.fetchall()
-    return
+def first_step_adventure(id_adventure):
+    queryplay = f"select s.id_step from STEP s where s.id_adventure='{id_adventure}' group by s.id_step order by count(s.id_step) desc limit 1"
+    cur.execute(queryplay)
+    step = cur.fetchall()
+    return step[0]
 
 def get_characters():
     return characters
@@ -169,7 +166,6 @@ def getUsers():
         users[i[1]]['password']=i[2]
         users[i[1]]['idUser']=i[0]
     return users
-#print(getUsers())
 
 
 def getUserIds():
@@ -183,7 +179,7 @@ def getUserIds():
     usersAndIds.append(usernames)
     usersAndIds.append(userIds)
     return usersAndIds
-#print(getUserIds())
+
 
 def insertUser(user,password):
     queryUser = f"insert ignore into USER(username,password) values ('{user}','{password}')"
@@ -203,7 +199,7 @@ def get_table(query):
     tupla2=dades
     tupla+=(tupla1,tupla2)
     return tupla
-#print(get_table("select * from ADVENTURE"))
+
 
 def checkUserbdd(user,password):
     global userid
@@ -227,9 +223,7 @@ def checkUserbdd(user,password):
             return 1
         else:
             return -1
-#checkUserbdd("Pablo","Matterblast")
 
-'''MIRAR POR SI ACASO'''
 def setIdGame():
     queryHistory = f"insert ignore into GAME(id_game) values '(max(id_game)+1)'"
     cur.execute(queryHistory)
@@ -253,7 +247,7 @@ def formatText(text,lenLine,split):
             print(text[i], end=" ")
             totallenght+=len(text[i])+1
     return ""
-#formatText("Hola soy el tipotipejo tipo amo claro",10,"\n")
+
 
 def getHeader(text):
     print("*"*120)
@@ -309,7 +303,7 @@ def getFormatedBodyColumns(tupla_texts,tupla_sizes,margin=0):
         print(textosLineas[1][i], end="")
         print(textosLineas[2][i])
 text = "Seguro que más de uno recuerda aquellos libros en los que podías elegir cómo seguir con la aventura que estabas viviendo simplemente"
-#getFormatedBodyColumns((text,text,text),(20,30,50),margin=2)
+
 
 adventures={1:{'Name': "Este muerto esta muy vivo",
                       'Description':"Beowulf, se embarca en la busqueda de la espada llamada la Ira de Los Cielos",
@@ -326,7 +320,7 @@ def getFormatedAdventures(adventures):
     print("*"*130)
     for i in adventures:
         getFormatedBodyColumns((str(i), adventures[i]['Name'], adventures[i]['Description']), (15, 30, 50), margin=0)
-#getFormatedAdventures(adventures)
+
 
 def getFormatedAnswers(idAnswer,text,lenLine,leftMargin):
     query = f"select id_answer,description from ANSWER where id_current_step={idAnswer}"
@@ -354,12 +348,6 @@ def getFormatedAnswers(idAnswer,text,lenLine,leftMargin):
                 totallenght += len(text[i]) + 1
         totallenght = 2
         print()
-query=f"select description from STEP where id_step=1"
-cur.execute(query)
-
-row = cur.fetchall()
-#formatText(row[0][0],60,"\n")
-#getFormatedAnswers(1,[],30,5)
 
 def getHeadeForTableFromTuples(t_name_columns,t_size_columns,title=""):
     total=0
@@ -375,7 +363,7 @@ def getHeadeForTableFromTuples(t_name_columns,t_size_columns,title=""):
         else:
             print(t_name_columns[i],end=(" " * space[i]))
     print("*"*total)
-#getHeadeForTableFromTuples(("column1", "column2", "column3"), (20, 40, 30))
+
 
 def getTableFromDict(tuple_of_keys,weigth_of_columns,dict_of_data):
     for i in dict_of_data:
@@ -384,15 +372,6 @@ def getTableFromDict(tuple_of_keys,weigth_of_columns,dict_of_data):
             print(" "*((weigth_of_columns[j])-len(dict_of_data[i])),end="")
             print(dict_of_data[i][tuple_of_keys[j]], end="")
         print()
-
-#diccionari= {4: {'idUser': 2, 'Username': 'Jordi', 'idAdventure': 1, 'Name': 'Este muerto esta muy vivo',
-#'date': (2021, 11, 28, 18, 17, 20), 'idCharacter': 1, 'CharacterName': 'Beowulf'}, 5: {'idUser': 2, 'Username': 'Jordi',
-#'idAdventure': 1, 'Name': 'Este muerto esta muy vivo', 'date': (2021, 11, 26, 13, 28, 36), 'idCharacter': 1,
-#'CharacterName': 'Beowulf'}}
-#tuple_of_keys = ("Username","Name","CharacterName","date")
-#weigth_of_columns = (20, 30, 20, 20)
-
-#getTableFromDict(tuple_of_keys,weigth_of_columns,diccionari)
 
 
 def getOpt(textOpts="",inputOptText="",rangeList=[],exceptions=[]):
@@ -411,7 +390,6 @@ def getOpt(textOpts="",inputOptText="",rangeList=[],exceptions=[]):
         print("Opcion no valida")
         return False
 
-#opc=getOpt(textOpts, inputOptText, lista, exceptions)
 
 def getFormatedTable(queryTable,title=""):
     title=queryTable[0]
@@ -426,8 +404,6 @@ def getFormatedTable(queryTable,title=""):
     for i in queryTable[1]:
         getFormatedBodyColumns((str(i[0]), str(i[1]), str(i[2])), (30, 30, 30), margin=0)
 
-
-#getFormatedTable(get_table("select id_answer, description, id_step_resolution from ANSWER"))
 
 def checkPassword(password):
     compPassword = False
@@ -586,7 +562,6 @@ def choosechar(tuplee):
     global charid
     global charselect
     getHeadeForTableFromTuples(("ID","NAME","DESCRIPTION"),(15,20,30))
-    #print("ID".center(15),"NAME".center(20),"DESCRIPTION".center(30))
     for j in tuplee:
         print(str(j[0]),str(j[1]).rjust(20),str(j[2]).rjust(30))
     option=input("Choose your character: ")
@@ -602,7 +577,7 @@ def chooseadventure(characterselected):
     global advselect
     getHeadeForTableFromTuples(("ID","NAME","DESCRIPTION"),(15,20,30))
     for j in getAdventures(characterselected):
-        print(str(j[0]).center(15), str(j[1]).center(20), str(j[2]).center(30))
+        getFormatedBodyColumns((str(j[0]), str(j[1]), str(j[2])),(15,20,60))
     option=input("Choose the adventure: ")
     for i in getAdventures(characterselected):
         if str(i[0])==option:
@@ -632,7 +607,7 @@ def playgame(adventureandchar):
     print(statement[0][0])
     if statement[0][1]==1:
         userid=userid[0][0]
-        queryinsert = f"insert ignore GAME (id_adventure,id_user,id_character) values ('{adventureandchar[1][0]}','{userid}','{charid}')"
+        queryinsert = f"insert ignore GAME (id_adventure,id_user,id_character) values ('{adventureandchar[1][0][0]}','{userid}','{charid}')"
         cur.execute(queryinsert)
         conn.commit()
         querymax = f"select max(id_game) from GAME"
@@ -664,8 +639,6 @@ charselect=""
 advselect=0
 history_insert=[]
 check=-1
-
-#print(playgame(chooseadventure(choosechar(getCharacter()))))
 
 def reportsmenu():
     getHeader("MENU REPORTS")
@@ -722,4 +695,3 @@ def gamesbyplayer():
     print("USER NOT EXISTS")
     aux=input("Enter to try again")
     return gamesbyplayer()
-#reportsmenu()
