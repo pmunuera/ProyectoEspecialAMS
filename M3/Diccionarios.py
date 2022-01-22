@@ -42,7 +42,7 @@ query='select * from ANSWER'
 cur.execute(query)
 
 tupla=cur.fetchall()
-print(tupla)
+
 for i in tupla:
     Answers_ByStep_Adventure[i[0],i[2]]={}#1:{}
     Answers_ByStep_Adventure[i[0],i[2]]['Description']=i[1]
@@ -61,19 +61,17 @@ cur.execute(query)
 
 tupla=cur.fetchall()
 
-
+print(tupla)
 for i in tupla:
     ByStep_Adventure[i[0]]={}#1:{}
-    ByStep_Adventure[i[0]]['Description']=i[1]
-    query2=f"select * from ANSWER where id_step_resolution in {i}"
+    ByStep_Adventure[i[0]]['Description']=i[2]
+    query2=f"select * from ANSWER where id_current_step in ({i[0]})"
     cur.execute(query2)
     tupla2 = cur.fetchall()
     ByStep_Adventure[i[0]]['answers_in_step']=()
-    c=0
     for j in tupla2:
-        ByStep_Adventure[i[0]]['answers_in_step'][0]=j[0]
-        c+=1
-    ByStep_Adventure[i[0]]['Final_Step'] = i[2]
+        ByStep_Adventure[i[0]]['answers_in_step']+=(j[0],)
+    ByStep_Adventure[i[0]]['Final_Step'] = i[1]
 
 print(ByStep_Adventure)
 
@@ -105,4 +103,3 @@ for i in tupla:
     tupla4 = cur.fetchall()
     for k in tupla4:
         replayAdventures[i[0]]['CharacterName'] = k[0]
-print(replayAdventures)
