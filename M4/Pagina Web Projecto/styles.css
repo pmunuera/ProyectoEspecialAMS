@@ -130,6 +130,10 @@ body {
     border:solid #fff ;
     border-radius: 5px;
 }
+.hero .info-content .donde-conseguirlo{
+    border:solid #fff ;
+    border-radius: 5px;
+}
 .footer {
     border-radius: 10px;
   display: grid;
