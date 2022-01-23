@@ -1,0 +1,72 @@
+/* Add a black background color to the top navigation bar */
+.header {
+    overflow: hidden;
+    background-color: #cfcfcf;
+    border: solid black;
+    border-radius: 8px;
+  }
+.header img{
+      height:150px ;
+      width: 200px;
+  }
+  /* Style the links inside the navigation bar */
+.header a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+  
+  /* Change the color of links on hover */
+.header a:hover {
+    background-color: rgb(187, 184, 184);
+    color: black;
+  }
+  
+  /* Style the "active" element to highlight the current page */
+.header a.active {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  /* Style the search box inside the navigation bar */
+.header input[type=text] {
+    float: right;
+    padding: 6px;
+    border: none;
+    margin-top: 8px;
+    margin-right: 16px;
+    font-size: 17px;
+  }
+.footer{
+    overflow: hidden;
+    background-color: #cfcfcf;
+    border: solid black;
+    border-radius: 8px;
+}
+.copy img {
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin: 5px;
+    margin-top: 20px;
+}
+.copy p{
+    float: left;
+    font-size: 30px;
+}
+.copy p1{
+    float: left;
+    font-size: 20px;
+    margin-top: 37px;
+}
+.Redes img {
+    float: right;
+    height: 40px;
+    width: 40px;
+    margin: 5px;
+    margin-top: 20px;
+}
