@@ -1,0 +1,179 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Roboto', sans-serif;
+}
+.fas {
+  font-size: 1.2em;
+}
+
+.navbar {
+  background-color: #ff9e71;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  align-items: center;
+  border-radius: 10px
+}
+.navbar .logo {
+  height: 100px;
+  width: 100px;
+  grid-column: 2 / 3;
+}
+.navbar .menu {
+  grid-column: 3 / 7;
+  display: flex;
+}
+.navbar .search {
+    grid-column: 7 / 9;
+    display: flex;
+  }
+.navbar ul li {
+  margin-right: 3em;
+  list-style: none;
+}
+.navbar a {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.hero {
+  background-image: linear-gradient(rgba(16, 16, 16, .8), rgba(16, 16, 16, .9)) , url(Imagenes/Drein.jpg);
+  background-size: cover;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  position: relative;
+  border-radius: 10px
+}
+.hero button{
+    height: 40px;
+    width: 100px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #EDCB54;
+    color: white;
+    border-radius: 15px;
+}
+.hero a {
+    text-decoration: none;
+    color: rgb(255, 0, 0);
+    cursor: pointer;
+  }
+.hero img{
+    border: solid white;
+    border-radius: 50%;
+}
+.hero .info-content {
+  grid-column: 3 / 10;
+  grid-row: 1 / 7;
+  color: #fff;
+  z-index: 1;
+}
+.hero .info-content h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8em;
+}
+.hero .info-content h1 {
+  font-weight: 900;
+  font-size: 5em;
+  color: #EDCB54;
+}
+.hero .info-content h4 {
+    font-weight: 900;
+    font-size: 5em;
+    color: #ffffff;
+  }
+.hero .info-content h2 {
+    color: #EDCB54;
+  }
+.hero .info-content h5 {
+    font-weight: 700;
+    font-size: 2em;
+    color: #ffffff;
+  }
+.hero .info-content p {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.hero .menu-page{
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    color: #fff;
+    z-index: 2;
+    background-color: #ff9e71;
+    position: fixed;
+    border-radius: 10px
+
+}
+.hero .menu-page .page{
+    background-color: red;
+}
+.hero .menu-page ul li {
+    margin: 3em;
+    list-style: none;
+}
+.hero .menu-page a {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+}
+.hero .info-content .Que-es{
+    border:solid #fff ;
+    border-radius: 5px;
+}
+.hero .info-content .Como-se-juega{
+    border:solid #fff ;
+    border-radius: 5px;
+}
+.footer {
+    border-radius: 10px;
+  display: grid;
+  height: 80px;
+  align-items: center;
+  background-color: #181818;
+  color: #fff;
+  grid-template-areas: 
+    "Copyright follow-me social-network"
+}
+.footer .Copyright {
+  grid-template-areas: Copyright;
+  display: flex;
+  justify-content: center;
+  background-color: #ff6d6d;
+  color:#181818;
+  padding: 26px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.footer .Copyright .fas {
+  margin-right: 15px;
+  font-size: 1.5em;
+}
+.footer h2 {
+  grid-template-areas: follow-me;
+  text-align: left;
+}
+.footer .social-network {
+  grid-template-areas: social-network;
+}
+.footer .social-network .fab {
+  font-size: 1.4em;
+  color: #EDCB54;
+  margin-right: 15px;
+  justify-content: flex-end;
+}
+.footer .Copyright img {
+    float: left;
+    height: 30px;
+    width: 30px;
+}
+.Redes img {
+    float: right;
+    height: 30px;
+    width: 30px;
+}
